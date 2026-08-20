@@ -1,0 +1,33 @@
+---
+title: "Meu relatorio"
+author: "Willian Miranda"
+format: html
+---
+
+## Testando o pacote
+
+```{python}
+from lab1.soma import soma
+soma(2, 3)
+```
+
+```{python}
+from lab1.soma import soma
+import juscraper as jus
+import plotnine as p9
+```
+
+Busca dados reais do TJSP:
+```{python}
+tjsp = jus.scraper("tjsp")
+dados = tjsp.cjpg("Serasa", paginas=range(1, 10))
+dados.shape
+```
+
+```{python}
+(
+    p9.ggplot(dados, p9.aes(x="assunto"))
+    + p9.geom_bar()
+    + p9.coord_flip()
+)
+```
