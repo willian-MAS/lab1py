@@ -6,3 +6,5 @@ notebooks/*_files/
 notebooks/*.ipynb
 .quarto/
 _site/
+
+notebooks/*.quarto_ipynb*
