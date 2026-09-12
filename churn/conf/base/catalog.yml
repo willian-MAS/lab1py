@@ -1,0 +1,124 @@
+# =============================================================================
+# Data Catalog — a interface (contrato) entre os nós e o armazenamento
+# =============================================================================
+# O código dos nós NUNCA chama pd.read_csv()/pd.to_csv(): quem resolve I/O é o
+# catálogo. Trocar CSV por Parquet, ou local por S3/GCS, é mudança de YAML.
+#
+# Convenção de camadas de dados (data/01_raw ... data/08_reporting):
+#   01_raw          -> dado imutável de origem
+#   02_intermediate -> limpo e tipado
+#   03_primary      -> entidades de domínio (aqui: com a coluna `split`)
+#   04_feature      -> features (aqui: categóricas encodadas)
+#   05_model_input  -> master table pronta para treino
+#   06_models       -> artefatos serializados (encoders, scalers, modelos)
+#   07_model_output -> predições
+#   08_reporting    -> métricas e relatórios
+
+# -----------------------------------------------------------------------------
+# Pipeline: data_engineering (treino)
+# -----------------------------------------------------------------------------
+raw_churn_data:
+  type: pandas.CSVDataset
+  filepath: data/01_raw/telco-churn-modelling.csv
+  load_args:
+    sep: ";"
+
+cleaned_churn_data:
+  type: pandas.CSVDataset
+  filepath: data/02_intermediate/cleaned_telco-churn-modelling.csv
+  save_args:
+    index: false
+
+split_churn_data:
+  type: pandas.CSVDataset
+  filepath: data/03_primary/split_telco-churn-modelling.csv
+  save_args:
+    index: false
+
+encoded_churn_data:
+  type: pandas.CSVDataset
+  filepath: data/04_feature/encoded_telco-churn-modelling.csv
+  save_args:
+    index: false
+
+master_table:
+  type: pandas.CSVDataset
+  filepath: data/05_model_input/master_table_telco-churn-modelling.csv
+  save_args:
+    index: false
+
+modelling_encoders:
+  type: pickle.PickleDataset
+  filepath: data/06_models/modelling_encoders.pkl
+
+modelling_scalers:
+  type: pickle.PickleDataset
+  filepath: data/06_models/modelling_scalers.pkl
+
+# -----------------------------------------------------------------------------
+# Pipeline: modelling
+# -----------------------------------------------------------------------------
+baseline_model:
+  type: pickle.PickleDataset
+  filepath: data/06_models/baseline_model.pkl
+
+optimized_model:
+  type: pickle.PickleDataset
+  filepath: data/06_models/optimized_model.pkl
+
+baseline_metrics:
+  type: json.JSONDataset
+  filepath: data/08_reporting/baseline_metrics.json
+
+optimized_metrics:
+  type: json.JSONDataset
+  filepath: data/08_reporting/optimized_metrics.json
+
+# -----------------------------------------------------------------------------
+# Pipeline: refit (artefatos de produção)
+# -----------------------------------------------------------------------------
+production_encoders:
+  type: pickle.PickleDataset
+  filepath: data/06_models/production_encoders.pkl
+
+production_scalers:
+  type: pickle.PickleDataset
+  filepath: data/06_models/production_scalers.pkl
+
+production_model:
+  type: pickle.PickleDataset
+  filepath: data/06_models/production_model.pkl
+
+# -----------------------------------------------------------------------------
+# Pipeline: inference
+# -----------------------------------------------------------------------------
+# Obs.: `raw_inference_dataframe` NÃO está no catálogo de propósito. Sem entrada,
+# o Kedro usa um MemoryDataset — é esse o ponto de injeção usado depois pela API
+# (FastAPI) para servir inferência online com o MESMO pipeline do modo batch.
+raw_inference_data:
+  type: pandas.CSVDataset
+  filepath: data/01_raw/telco-churn-inference.csv
+  load_args:
+    sep: ";"
+
+cleaned_inference_data:
+  type: pandas.CSVDataset
+  filepath: data/02_intermediate/cleaned_telco-churn-inference.csv
+  save_args:
+    index: false
+
+encoded_inference_data:
+  type: pandas.CSVDataset
+  filepath: data/04_feature/encoded_telco-churn-inference.csv
+  save_args:
+    index: false
+
+scaled_inference_data:
+  type: pandas.CSVDataset
+  filepath: data/05_model_input/scaled_telco-churn-inference.csv
+  save_args:
+    index: false
+
+inference_predictions:
+  type: json.JSONDataset
+  filepath: data/07_model_output/inference_predictions.json

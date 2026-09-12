@@ -1,0 +1,26 @@
+# =============================================================================
+# Parâmetros da pipeline: data_engineering
+# =============================================================================
+
+# Proporção de cada split e semente para reprodutibilidade (determinismo!).
+split:
+  train: 0.7
+  test: 0.15
+  validate: 0.15
+  random_state: 42
+
+# Encoders de modelagem: ajustados SÓ no split de treino.
+# É essa linha que evita data leakage (o encoder não vê test/validate).
+modelling_encoders:
+  columns:
+    - target
+    - categorical
+  split_to_fit:
+    - train
+
+# Scalers de modelagem: mesma lógica, ajuste só no treino.
+modelling_scalers:
+  columns:
+    - numerical
+  split_to_fit:
+    - train

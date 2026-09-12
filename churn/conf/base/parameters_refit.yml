@@ -1,0 +1,28 @@
+# =============================================================================
+# Parâmetros da pipeline: refit (preparação dos artefatos de produção)
+# =============================================================================
+# Mesmas FUNÇÕES da data_engineering, outros PARÂMETROS: agora podemos usar
+# todos os splits, porque a avaliação já foi feita e validada na modelling.
+
+refit_encoders:
+  columns:
+    - target
+    - categorical
+  split_to_fit:
+    - train
+    - test
+    - validate
+
+refit_scalers:
+  columns:
+    - numerical
+  split_to_fit:
+    - train
+    - test
+    - validate
+
+refit_model:
+  train_splits:
+    - train
+    - test
+    - validate

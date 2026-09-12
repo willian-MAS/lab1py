@@ -1,0 +1,33 @@
+# =============================================================================
+# Parâmetros compartilhados por TODAS as pipelines
+# =============================================================================
+# Regra do Kedro: lógica em src/, configuração em conf/.
+# Nenhuma lista de colunas, hiperparâmetro ou caminho de arquivo no código.
+
+# Grupos de colunas do dataset Telco Customer Churn.
+# Usado por clean_data, fit/transform de encoders e scalers, treino e inferência.
+# A coluna `target` some naturalmente nos dados de inferência: clean_data ignora
+# colunas ausentes, então o MESMO parâmetro serve para treino e inferência.
+columns:
+  target: Churn
+  numerical:
+    - tenure
+    - MonthlyCharges
+    - TotalCharges
+  categorical:
+    - PaymentMethod
+    - Contract
+    - gender
+    - SeniorCitizen
+    - Partner
+    - Dependents
+    - PhoneService
+    - MultipleLines
+    - InternetService
+    - OnlineSecurity
+    - OnlineBackup
+    - DeviceProtection
+    - TechSupport
+    - StreamingTV
+    - StreamingMovies
+    - PaperlessBilling

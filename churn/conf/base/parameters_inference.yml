@@ -1,0 +1,6 @@
+# =============================================================================
+# Parâmetros da pipeline: inference
+# =============================================================================
+# A inferência não tem parâmetros próprios: ela reaproveita `columns`
+# (conf/base/parameters.yml) e os artefatos de produção gerados pelo refit
+# (production_encoders, production_scalers, production_model).

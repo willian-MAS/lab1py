@@ -1,0 +1,91 @@
+[build-system]
+requires = [
+    "setuptools",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+requires-python = ">=3.11"
+name = "churn"
+readme = "README.md"
+description = "Pipeline de churn (Telco) pronta para produção com Kedro"
+dynamic = [
+    "version",
+]
+dependencies = [
+    # framework
+    "kedro~=1.6.0",
+    "kedro-datasets[json-jsondataset,pandas-csvdataset,pickle-pickledataset]>=8.0",
+    "kedro-viz>=12.0",
+    # dados e modelagem
+    "pandas>=2.2",
+    "numpy>=1.26",
+    "scikit-learn>=1.5",
+    "catboost>=1.2",
+    # exploração interativa (kedro ipython / kedro jupyter lab)
+    "ipython>=8.10",
+    "jupyterlab>=3.0",
+    "notebook",
+]
+
+[project.scripts]
+churn = "churn.__main__:main"
+
+[project.entry-points."kedro.hooks"]
+
+[dependency-groups]
+dev = [
+    "pytest~=8.3",
+    "pytest-cov>=5,<7",
+    "pytest-mock>=3.14,<4.0",
+    "ruff~=0.12.0",
+]
+
+[tool.setuptools.dynamic.version]
+attr = "churn.__version__"
+
+[tool.setuptools.packages.find]
+where = [
+    "src",
+]
+namespaces = false
+
+[tool.kedro]
+package_name = "churn"
+project_name = "churn"
+kedro_init_version = "1.6.0"
+tools = "['Linting', 'Testing', 'Custom Logging', 'Data Structure']"
+example_pipeline = "False"
+source_dir = "src"
+
+[tool.pytest.ini_options]
+addopts = "--cov-report term-missing --cov src/churn -ra"
+
+[tool.coverage.report]
+fail_under = 0
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+]
+
+[tool.ruff]
+line-length = 88
+show-fixes = true
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = [
+    "F",   # pyflakes
+    "W",   # pycodestyle warnings
+    "E",   # pycodestyle errors
+    "I",   # isort
+    "UP",  # pyupgrade
+    "PL",  # pylint
+    "T201", # print() encontrado - use logging
+]
+ignore = [
+    "E501", # tamanho de linha (o formatter já cuida)
+]

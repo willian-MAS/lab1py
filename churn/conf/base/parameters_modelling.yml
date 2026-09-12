@@ -1,0 +1,38 @@
+# =============================================================================
+# Parâmetros da pipeline: modelling
+# =============================================================================
+# `class_path` permite trocar de modelo mexendo só no YAML (config-driven):
+# o nó carrega a classe dinamicamente com importlib.
+
+# Baseline simples e rápido, para ter uma régua.
+modelling_baseline:
+  class_path: sklearn.linear_model.LogisticRegression
+  target_column: Churn
+  train_splits:
+    - train
+  eval_splits:
+    - train
+    - test
+    - validate
+
+# Modelo candidato com busca de hiperparâmetros (GridSearchCV).
+modelling_optimization:
+  class_path: catboost.CatBoostClassifier
+  target_column: Churn
+  train_splits:
+    - train
+    - test
+  eval_splits:
+    - train
+    - test
+    - validate
+  init_args:
+    random_seed: 42
+    verbose: 0
+    train_dir: data/tmp/catboost_info
+  cv: 5
+  scoring: roc_auc
+  param_grid:
+    depth: [2, 4, 8]
+    iterations: [10, 100, 300]
+    learning_rate: [0.01, 0.05, 0.1]
