@@ -1,0 +1,47 @@
+{
+  // Debug do Kedro no VSCode: coloque um breakpoint dentro de um nó (nodes.py)
+  // e rode uma destas configurações com F5.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Kedro: run (pipeline completa)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "kedro",
+      "args": ["run"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false
+    },
+    {
+      "name": "Kedro: run --pipeline=data_engineering",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "kedro",
+      "args": ["run", "--pipeline=data_engineering"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false
+    },
+    {
+      "name": "Kedro: run --nodes=<no>  (edite o nome do nó)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "kedro",
+      "args": ["run", "--nodes=clean_data"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false
+    },
+    {
+      "name": "Kedro: viz",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "kedro",
+      "args": ["viz", "run", "--no-browser"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false
+    }
+  ]
+}
