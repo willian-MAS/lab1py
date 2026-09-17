@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Kedro: run (todas as pipelines)",
+      "type": "debugpy", "request": "launch", "module": "kedro",
+      "args": ["run"], "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}", "justMyCode": false
+    },
+    {
+      "name": "Kedro: run --pipeline=data_engineering",
+      "type": "debugpy", "request": "launch", "module": "kedro",
+      "args": ["run", "--pipeline=data_engineering"], "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}", "justMyCode": false
+    },
+    {
+      "name": "Kedro: viz",
+      "type": "debugpy", "request": "launch", "module": "kedro",
+      "args": ["viz", "run", "--no-browser"], "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}", "justMyCode": false
+    },
+    {
+      "name": "FastAPI: uvicorn (debug da API)",
+      "type": "debugpy", "request": "launch", "module": "uvicorn",
+      "args": ["diabetes.api:app", "--host", "0.0.0.0", "--port", "8000", "--reload"],
+      "console": "integratedTerminal", "cwd": "${workspaceFolder}", "justMyCode": false
+    }
+  ]
+}

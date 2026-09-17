@@ -1,0 +1,33 @@
+# =============================================================================
+# Parametros da pipeline: refit (artefatos de producao)
+# =============================================================================
+# MESMAS funcoes da data_engineering, outros parametros: agora podemos usar
+# todos os splits, porque a avaliacao ja foi feita e validada na modelling.
+
+refit_imputers:
+  columns: [numerical]
+  strategy: median
+  split_to_fit: [train, test, validate]
+
+refit_outliers:
+  columns: [numerical]
+  q_low: 0.05
+  q_high: 0.95
+  iqr_factor: 1.5
+  split_to_fit: [train, test, validate]
+
+refit_encoders:
+  columns: [engineered_categorical]
+  split_to_fit: [train, test, validate]
+
+refit_scalers:
+  columns: [numerical, engineered_numerical]
+  class_path: sklearn.preprocessing.RobustScaler
+  split_to_fit: [train, test, validate]
+
+refit_model:
+  feature_groups:
+    - numerical
+    - engineered_numerical
+    - engineered_categorical
+  train_splits: [train, test, validate]

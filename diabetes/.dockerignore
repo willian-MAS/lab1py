@@ -1,0 +1,31 @@
+# Ambiente e caches locais nao entram na imagem
+.venv/
+.git/
+.gitignore
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Notebooks e artefatos de exploracao
+notebooks/
+build/
+docs/
+
+# Camadas derivadas: sao regeneradas pelo pipeline (ou chegam pelo volume).
+# So data/01_raw entra na imagem, e o Dockerfile copia explicitamente.
+data/02_intermediate/
+data/03_primary/
+data/04_feature/
+data/05_model_input/
+data/06_models/
+data/07_model_output/
+data/08_reporting/
+data/tmp/
+
+# Logs e configuracao local/sensivel
+*.log
+conf/local/

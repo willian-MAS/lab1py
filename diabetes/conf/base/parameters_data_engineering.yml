@@ -1,0 +1,41 @@
+# =============================================================================
+# Parametros da pipeline: data_engineering
+# =============================================================================
+# O notebook original ajusta imputacao, outliers, encoders e scaler sobre o
+# dataset INTEIRO e so depois separa treino e teste -- exatamente o data
+# leakage que a disciplina combate. Aqui cada artefato e ajustado somente nos
+# splits listados em `split_to_fit`.
+
+# Proporcao de cada split e semente (determinismo / reprodutibilidade).
+split:
+  train: 0.7
+  test: 0.15
+  validate: 0.15
+  random_state: 42
+
+# Imputacao dos faltantes (inclusive os zeros convertidos em NaN na limpeza).
+modelling_imputers:
+  columns: [numerical]
+  strategy: median
+  split_to_fit: [train]
+
+# Limites de outlier: low = q_low - 1.5*IQR, up = q_high + 1.5*IQR,
+# com IQR medido entre os quantis q_low e q_high (secao 16 do notebook).
+modelling_outliers:
+  columns: [numerical]
+  q_low: 0.05
+  q_high: 0.95
+  iqr_factor: 1.5
+  split_to_fit: [train]
+
+# LabelEncoder para cada categorica derivada.
+modelling_encoders:
+  columns: [engineered_categorical]
+  split_to_fit: [train]
+
+# Escalonamento: RobustScaler, como no notebook (robusto a outliers).
+# A classe vem do YAML -- trocar por StandardScaler e mudar esta linha.
+modelling_scalers:
+  columns: [numerical, engineered_numerical]
+  class_path: sklearn.preprocessing.RobustScaler
+  split_to_fit: [train]

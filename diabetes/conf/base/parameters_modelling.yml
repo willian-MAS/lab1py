@@ -1,0 +1,49 @@
+# =============================================================================
+# Parametros da pipeline: modelling
+# =============================================================================
+# `class_path` permite trocar de modelo mexendo so no YAML: o no carrega a
+# classe dinamicamente com importlib.
+
+# Quais grupos de `columns` entram como features do modelo.
+# A chave comeca com "_": o Kedro trata essas chaves como auxiliares de
+# template e nao as expoe como um parametro solto.
+_feature_groups: &feature_groups
+  - numerical
+  - engineered_numerical
+  - engineered_categorical
+
+# Baseline simples e rapido, para ter uma regua.
+modelling_baseline:
+  class_path: sklearn.linear_model.LogisticRegression
+  target_column: Outcome
+  feature_groups: *feature_groups
+  init_args:
+    random_state: 46
+    max_iter: 1000
+  train_splits: [train]
+  eval_splits: [train, test, validate]
+
+# Modelo candidato com busca de hiperparametros (secao 20.1.1 do notebook).
+# Treina no MESMO split do baseline, para que a comparacao seja justa: o
+# GridSearchCV ja faz validacao cruzada interna dentro do treino. Os papeis
+# ficam: train = ajuste, test = comparacao entre modelos, validate = holdout
+# final, tocado so no fim.
+modelling_optimization:
+  class_path: sklearn.ensemble.RandomForestClassifier
+  target_column: Outcome
+  feature_groups: *feature_groups
+  init_args:
+    random_state: 46
+  cv: 5
+  scoring: roc_auc
+  param_grid:
+    n_estimators: [100, 200, 300]
+    max_depth: [null, 5, 10]
+    min_samples_split: [2, 5, 10]
+    # Regularizacao e peso de classe: o dataset e desbalanceado (65% negativos)
+    # e, em triagem clinica, deixar passar um doente custa mais caro do que um
+    # falso alarme -- `balanced` puxa o recall para cima.
+    min_samples_leaf: [1, 3]
+    class_weight: [null, balanced]
+  train_splits: [train]
+  eval_splits: [train, test, validate]

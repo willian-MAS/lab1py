@@ -1,0 +1,95 @@
+# =============================================================================
+# Parametros compartilhados por TODAS as pipelines
+# =============================================================================
+# Regra do Kedro: logica em src/, configuracao em conf/.
+# Nenhuma lista de colunas, faixa de corte ou hiperparametro no codigo Python.
+
+# -----------------------------------------------------------------------------
+# Grupos de colunas do dataset Pima Indians Diabetes
+# -----------------------------------------------------------------------------
+columns:
+  target: Outcome
+
+  # As 8 medidas originais do exame.
+  numerical:
+    - Pregnancies
+    - Glucose
+    - BloodPressure
+    - SkinThickness
+    - Insulin
+    - BMI
+    - DiabetesPedigreeFunction
+    - Age
+
+  # O dataset bruto nao tem colunas categoricas: todas nascem da engenharia
+  # de features abaixo.
+  categorical: []
+
+  # Zeros impossiveis: ninguem tem glicose, pressao, espessura de pele, insulina
+  # ou IMC igual a zero. Sao faltantes disfarcados e viram NaN na limpeza, para
+  # depois serem imputados pela mediana APRENDIDA NO TREINO.
+  # (No dataset de modelagem: Insulin tem 314 zeros e SkinThickness 192.)
+  zero_as_missing:
+    - Glucose
+    - BloodPressure
+    - SkinThickness
+    - Insulin
+    - BMI
+
+  # Features derivadas criadas pelo no add_engineered_features.
+  engineered_numerical:
+    - NEW_GLUCOSE_INSULIN
+    - NEW_GLUCOSE_PREGNANCIES
+
+  engineered_categorical:
+    - NEW_AGE_CAT
+    - NEW_BMI_CAT
+    - NEW_GLUCOSE_CAT
+    - NEW_GLUCOSE_LEVEL
+    - NEW_AGE_BMI_CAT
+    - NEW_AGE_GLUCOSE_CAT
+    - NEW_INSULIN_SCORE
+
+# -----------------------------------------------------------------------------
+# Engenharia de features (secao 17 do notebook, "Feature Extraction")
+# -----------------------------------------------------------------------------
+# Toda regra de negocio clinica vive aqui, nao no codigo: mudar um ponto de
+# corte de IMC ou de glicemia e alterar YAML, nao Python.
+feature_engineering:
+  # Faixas: pd.cut(source, bins, labels)
+  binned:
+    NEW_AGE_CAT:
+      source: Age
+      bins: [0, 50, 200]
+      labels: [mature, senior]
+    NEW_BMI_CAT:
+      source: BMI
+      bins: [0, 18.5, 24.9, 29.9, 200]
+      labels: [Underweight, Healthy, Overweight, Obese]
+    NEW_GLUCOSE_CAT:
+      source: Glucose
+      bins: [0, 140, 200, 500]
+      labels: [Normal, Prediabetes, Diabetes]
+    NEW_GLUCOSE_LEVEL:
+      source: Glucose
+      bins: [0, 70, 100, 125, 500]
+      labels: [low, normal, hidden, high]
+
+  # Dentro/fora de uma faixa de referencia
+  ranged:
+    NEW_INSULIN_SCORE:
+      source: Insulin
+      low: 16
+      high: 166
+      inside: Normal
+      outside: Abnormal
+
+  # Concatenacao de categoricas ja criadas acima
+  combined:
+    NEW_AGE_BMI_CAT: [NEW_BMI_CAT, NEW_AGE_CAT]
+    NEW_AGE_GLUCOSE_CAT: [NEW_GLUCOSE_LEVEL, NEW_AGE_CAT]
+
+  # Produto de duas colunas numericas (interacoes do notebook)
+  products:
+    NEW_GLUCOSE_INSULIN: [Glucose, Insulin]
+    NEW_GLUCOSE_PREGNANCIES: [Glucose, Pregnancies]

@@ -1,0 +1,16 @@
+services:
+  api:
+    build: .
+    image: diabetes-api:latest
+    container_name: diabetes-api
+    ports:
+      - "8000:8000"
+    volumes:
+      # Configuracao entra somente leitura: o container nunca reescreve conf/.
+      - ./conf:/app/conf:ro
+      # Dados entram leitura e escrita: o que o pipeline gera dentro do
+      # container (modelos, metricas, predicoes) aparece na sua maquina.
+      - ./data:/app/data
+    environment:
+      - DO_NOT_TRACK=1
+    restart: unless-stopped
