@@ -86,3 +86,6 @@ ignore = ["E501"]
 # Em teste, comparar direto com o literal (200, 404, 2) e mais legivel do que
 # criar uma constante para cada numero.
 "tests/**" = ["PLR2004"]
+
+[tool.kedro_telemetry]
+project_id = "f2a91d60989e4e118879e70f77e7e49f"

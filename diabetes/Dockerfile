@@ -37,4 +37,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health').read()" || exit 1
 
-CMD ["uv", "run", "uvicorn", "diabetes.api:app", "--host", "0.0.0.0", "--port", "8000"]
+# --no-dev: sem isso o `uv run` tentaria instalar pytest/ruff ao subir o container.
+CMD ["uv", "run", "--frozen", "--no-dev", "uvicorn", "diabetes.api:app", "--host", "0.0.0.0", "--port", "8000"]

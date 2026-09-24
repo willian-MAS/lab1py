@@ -9,7 +9,6 @@ exposto como API REST com FastAPI e empacotado em container Docker.
 
 - Willian Miranda
 - Nicole Cristine
-- Alfredo Ennes
 
 O desenho dos pipelines e as decisoes de projeto estao em
 [`PLANEJAMENTO_PIPELINES.md`](./PLANEJAMENTO_PIPELINES.md) (item 1 do enunciado).
