@@ -62,6 +62,9 @@ feature_engineering:
       source: Age
       bins: [0, 50, 200]
       labels: [mature, senior]
+      # right: false -> intervalos [0, 50) e [50, 200): 50 anos ja e "senior",
+      # como no notebook (Age >= 50). O padrao do pd.cut fecharia a direita.
+      right: false
     NEW_BMI_CAT:
       source: BMI
       bins: [0, 18.5, 24.9, 29.9, 200]
@@ -72,8 +75,10 @@ feature_engineering:
       labels: [Normal, Prediabetes, Diabetes]
     NEW_GLUCOSE_LEVEL:
       source: Glucose
-      bins: [0, 70, 100, 125, 500]
+      # notebook: <70 low, 70-99 normal, 100-125 hidden, >125 high
+      bins: [0, 70, 100, 126, 500]
       labels: [low, normal, hidden, high]
+      right: false
 
   # Dentro/fora de uma faixa de referencia
   ranged:

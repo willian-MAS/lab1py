@@ -100,7 +100,7 @@ diabetes/
 │       ├── modelling/
 │       ├── refit/
 │       └── inference/
-├── tests/                     # 34 testes (espelha src/)
+├── tests/                     # 36 testes (espelha src/)
 ├── Dockerfile
 ├── docker-compose.yml
 ├── PLANEJAMENTO_PIPELINES.md
@@ -153,18 +153,18 @@ Metricas da ultima execucao (`uv run kedro run`):
 
 | Modelo | split | accuracy | recall | f1 | roc_auc |
 |---|---|---:|---:|---:|---:|
-| baseline — LogisticRegression | test | 0,6422 | 0,4286 | 0,4800 | 0,7196 |
-| baseline — LogisticRegression | validate | 0,8132 | 0,7097 | 0,7213 | 0,8812 |
-| otimizado — RandomForest | test | 0,6330 | 0,5714 | 0,5455 | 0,7349 |
+| baseline — LogisticRegression | test | 0,6422 | 0,4286 | 0,4800 | 0,7225 |
+| baseline — LogisticRegression | validate | 0,8242 | 0,7097 | 0,7333 | 0,8882 |
+| otimizado — RandomForest | test | 0,6239 | 0,5952 | 0,5495 | 0,7274 |
 | otimizado — RandomForest | validate | **0,8352** | **0,7742** | **0,7619** | **0,8898** |
 
-Melhores hiperparametros do grid search (roc_auc de CV = 0,8722):
-`n_estimators=300`, `max_depth=None`, `min_samples_split=2`,
-`min_samples_leaf=3`, `class_weight=balanced`.
+Melhores hiperparametros do grid search (roc_auc de CV = 0,8691):
+`n_estimators=200`, `max_depth=10`, `min_samples_split=10`,
+`min_samples_leaf=1`, `class_weight=balanced`.
 
 **Inferencia nos 116 registros da base separada** (que trazem o `Outcome` real,
-entao da para conferir): accuracy 0,7500, recall 0,7750, f1 0,6813,
-roc_auc 0,8151 — na mesma faixa do que o notebook obtem, agora sem vazamento e
+entao da para conferir): accuracy 0,7414, recall 0,7500, f1 0,6667,
+roc_auc 0,8220 — na mesma faixa do que o notebook obtem, agora sem vazamento e
 de forma reprodutivel.
 
 ## API REST
@@ -240,7 +240,7 @@ preserva o cache do `uv sync` quando so o codigo muda, e declara um
 ## Testes e qualidade
 
 ```bash
-uv run pytest                      # 34 testes
+uv run pytest                      # 36 testes
 uv run ruff check src/ tests/      # lint
 uv run ruff format src/ tests/     # formatacao
 ```

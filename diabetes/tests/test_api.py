@@ -144,6 +144,33 @@ class TestInferenciaOnline:
     def test_corpo_sem_instances_e_recusado(self, client: TestClient):
         assert client.post("/inference", json={}).status_code == 422
 
+    def test_campo_ausente_e_recusado_com_422(self, client: TestClient):
+        resposta = client.post("/inference", json={"instances": [{"Glucose": 148}]})
+
+        assert resposta.status_code == 422
+        faltando = {erro["loc"][-1] for erro in resposta.json()["detail"]}
+        assert {"Age", "BMI", "Insulin"} <= faltando
+
+    def test_valor_nulo_e_imputado(self, client: TestClient, artefatos_prontos: bool):
+        if not artefatos_prontos:
+            pytest.skip("rode `kedro run` antes: faltam artefatos")
+
+        paciente = {
+            "Pregnancies": 2,
+            "Glucose": 120,
+            "BloodPressure": None,
+            "SkinThickness": None,
+            "Insulin": None,
+            "BMI": 30.1,
+            "DiabetesPedigreeFunction": 0.4,
+            "Age": 35,
+        }
+
+        resposta = client.post("/inference", json={"instances": [paciente]})
+
+        assert resposta.status_code == 200
+        assert resposta.json()["predictions"][0]["prediction"] in (0, 1)
+
 
 class TestExecucoesEmSegundoPlano:
     """O disparo em segundo plano e testado com o executor trocado por um dublê.

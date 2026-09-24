@@ -37,7 +37,7 @@ from kedro.framework.session import KedroSession
 from kedro.framework.startup import bootstrap_project
 from kedro.io import MemoryDataset
 from kedro.runner import SequentialRunner
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 logger = logging.getLogger(__name__)
 
@@ -159,14 +159,24 @@ class RunStatus(BaseModel):
     result: Any | None = None
 
 
+class PatientRecord(BaseModel):
+    """As 8 medidas de entrada. `null` e aceito e vira valor imputado."""
+
+    model_config = ConfigDict(extra="allow")
+
+    Pregnancies: float | None
+    Glucose: float | None
+    BloodPressure: float | None
+    SkinThickness: float | None
+    Insulin: float | None
+    BMI: float | None
+    DiabetesPedigreeFunction: float | None
+    Age: float | None
+
+
 class InferenceRequest(BaseModel):
-    instances: list[dict[str, Any]] = Field(
+    instances: list[PatientRecord] = Field(
         ...,
-        description=(
-            "Registros a escorar. Cada um deve trazer as 8 medidas do exame: "
-            "Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, "
-            "DiabetesPedigreeFunction e Age."
-        ),
         json_schema_extra={
             "example": [
                 {
@@ -437,7 +447,7 @@ def run_inference(request: InferenceRequest) -> InferenceResponse:
             for dataset_name in ONLINE_OVERRIDES:
                 catalog[dataset_name] = MemoryDataset()
             catalog["raw_inference_data"] = MemoryDataset(
-                data=pd.DataFrame(request.instances)
+                data=pd.DataFrame([record.model_dump() for record in request.instances])
             )
 
             SequentialRunner().run(kedro_pipelines["inference"], catalog)

@@ -29,7 +29,9 @@ modelling_optimization:
   init_args:
     random_seed: 42
     verbose: 0
-    train_dir: data/tmp/catboost_info
+    # nao grava logs em disco: com o GridSearchCV em paralelo (n_jobs=-1), varios
+    # processos disputavam a mesma pasta de log e alguns treinos falhavam no Windows
+    allow_writing_files: false
   cv: 5
   scoring: roc_auc
   param_grid:
