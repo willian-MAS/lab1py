@@ -5,13 +5,11 @@ Exercicio de avaliacao da disciplina *Deployment: Production-Ready Data Science*
 transformado num projeto [Kedro](https://kedro.org) de quatro pipelines,
 exposto como API REST com FastAPI e empacotado em container Docker.
 
-**Grupo:** _(preencher os 3 integrantes)_
+**Grupo:**
 
-| Nome | E-mail |
-|---|---|
-| | |
-| | |
-| | |
+- Willian Miranda
+- Nicole Cristine
+- Alfredo Ennes
 
 O desenho dos pipelines e as decisoes de projeto estao em
 [`PLANEJAMENTO_PIPELINES.md`](./PLANEJAMENTO_PIPELINES.md) (item 1 do enunciado).
